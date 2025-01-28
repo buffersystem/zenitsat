@@ -1,0 +1,6 @@
+Zenitsat communication log
+26/01/2025 - 20:58:00
+
+>>> [1] GPS: (0, 0, 0) | Speed: 0 | Temperature: 0 | Humidity: 0 | Pressure: 0 | Radiation: 0   #Zenitsat
+>>> [2] GPS: (0, 0, 0) | Speed: 0 | Temperature: 0 | Humidity: 0 | Pressure: 0 | Radiation: 0   #Zenitsat
+>>> [3] GPS: (0, 0, 0) | Speed: 0 | Temperature: 0 | Humidity: 0 | Pressure: 0 | Radiation: 0   #Zenitsat
