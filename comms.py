@@ -1,8 +1,8 @@
-import datetime, time, pathlib
-import awesometkinter as atk
+import datetime, time
 import customtkinter as ctk
-import tkinter.ttk as ttk
-import tkinter as tk
+import matplotlib.pyplot as plt
+import mplcyberpunk as mcp
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg as FTK
 
 
 startdate = datetime.datetime.today()
@@ -18,15 +18,34 @@ class Screen(ctk.CTk):
         self.width = width
         self.height = height
         self.name = name
+        self.barcount = 0
+        self.rows = 0
+        self.columns = 0
 
         self.geometry(f"{width}x{height}")
         self.title(name)
 
-    def create_grid(self, rows, columns):
+    def create_grid(self):
+        return
+        self.row = int(self.height/rows)
         for row in range(rows):
-            self.rowconfigure(index= row, minsize= int(self.height/rows), weight= 1)
+            self.rowconfigure(index= row, minsize= self.row, weight= 1)
+
+        self.column = int(self.width/columns)
         for column in range(columns):
-            self.columnconfigure(index= column, minsize= int(self.width/columns), weight= 1)
+            self.columnconfigure(index= column, minsize= self.column, weight= 1)
+
+    def add_pbar(self, title, font, var, varname):
+        text = ctk.CTkLabel(master= self, text= title, font= font)
+        varobj = ctk.Variable(value= var, name= varname)
+        pbar = ctk.CTkProgressBar(master= root, corner_radius= 10, variable= varobj)
+        self.barcount += 1
+        return (text, pbar)
+
+    def add_graph(self, title, font, var, varname):
+        text = ctk.CTkLabel(master= self, text= title, font= font)
+        varobj = ctk.Variable(value= var, name= varname)
+        graph = None
 
 
 def create_file():
@@ -51,15 +70,20 @@ def time_since_start():
     return f"{time.strftime("%M:%S", time.gmtime(int(t)))}:{str(t%1)[2:]}"
 
 
-create_file()
 
-main = Screen(960, 640, "Prueba")
-main.create_grid(4, 4)
 
-bar = ctk.CTkProgressBar(master= main, width= 100, height= 20, corner_radius= 10)
-bar.grid(row= 1, column= 1 , padx= 0, pady= 0)
+#create_file()
 
-main.mainloop()
+root = Screen(960, 640, "Prueba")
+root.create_grid(4, 4)
+font = ctk.CTkFont(family= "Noto Sans", weight= "normal", size= 32)
+
+speedtext = ctk.CTkLabel(master= root, width= root.column-40, height= 40, text= "Speed", font= font)
+speedtext.grid(row= 0, column= 0, padx= 10, pady= 10)
+speedbar = ctk.CTkProgressBar(master= root, width= root.column-40, height= 20, corner_radius= 10)
+speedbar.grid(row= 0, column= 0, padx= 10, pady= 10)
+
+root.mainloop()
 
 
 
