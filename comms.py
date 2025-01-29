@@ -25,15 +25,73 @@ class Screen(ctk.CTk):
         self.geometry(f"{width}x{height}")
         self.title(name)
 
-    def create_grid(self):
-        return
-        self.row = int(self.height/rows)
-        for row in range(rows):
-            self.rowconfigure(index= row, minsize= self.row, weight= 1)
+        self.create_fonts()
 
-        self.column = int(self.width/columns)
-        for column in range(columns):
-            self.columnconfigure(index= column, minsize= self.column, weight= 1)
+
+    def create_grid(self, bars: list, graphs: list):
+        bar_count = sep_by(len(bars), 3)
+        graph_count = sep_by(len(graphs), 3)
+
+        self.bar_frame = ctk.CTkFrame(master= self, height= 100*len(bar_count))
+        self.bar_frame.rowconfigure(index= 0, minsize= 80, weight= 1)
+        for row in range(len(bar_count)):
+            self.bar_frame.rowconfigure(index= row+1, minsize= 100, weight= 1)
+        for column in range(bar_count[0]):
+            self.bar_frame.columnconfigure(index= column, minsize= 200, weight= 1)
+
+        self.graph_frame = ctk.CTkFrame(master= self, height= 200*len(graph_count))
+        self.graph_frame.rowconfigure(index= 0, minsize= 80, weight= 1)
+        for row in range(len(graph_count)):
+            self.graph_frame.rowconfigure(index= row+1, minsize= 200, weight= 1)
+        for column in range(graph_count[0]):
+            self.graph_frame.columnconfigure(index= column, minsize= 200, weight= 1)
+
+
+    def create_fonts(self):
+        self.font_title = ctk.CTkFont(family= "Noto Sans", weight= "bold", size= 24)
+        self.font_subtitle = ctk.CTkFont(family= "Noto Sans", weight= "bold", size= 20)
+        self.font_text = ctk.CTkFont(family= "Noto Sans", weight= "normal", size= 16)
+        self.font_itallic = ctk.CTkFont(family= "Noto Sans", weight= "normal", size= 16, slant= "italic")
+
+
+    def create_settings(self):
+        label_title = ctk.CTkLabel(master= self, text= "Widget settings", font= self.font_title)
+        space1 = add_space(self, 30)
+        space1.pack()
+        label_title.pack(pady= 5)
+
+        # bar options
+        label_bars = ctk.CTkLabel(master= self, text= "Bars", font= self.font_subtitle)
+        bar_speed = ctk.CTkCheckBox(master= self, text= "Speed", font= self.font_text)
+        bar_temperature = ctk.CTkCheckBox(master= self, text= "Temperature", font= self.font_text)
+        bar_pressure = ctk.CTkCheckBox(master= self, text= "Pressure", font= self.font_text)
+        bar_humidity = ctk.CTkCheckBox(master= self, text= "Humidity", font= self.font_text)
+        bar_altitude = ctk.CTkCheckBox(master= self, text= "Altitude", font= self.font_text)
+        bar_acceleration = ctk.CTkCheckBox(master= self, text= "Acceleration", font= self.font_text)
+        self.bars = [bar_speed, bar_temperature, bar_pressure, bar_humidity, bar_altitude, bar_acceleration]
+
+        space2 = add_space(self, 20)
+        space2.pack()
+        label_bars.pack(pady= 5)
+        for bar in self.bars:
+            bar.pack(pady= 5)
+        
+        # graph options
+        label_graphs = ctk.CTkLabel(master= self, text= "Graphs", font= self.font_subtitle)
+        graph_speed = ctk.CTkCheckBox(master= self, text= "Speed", font= self.font_text)
+        graph_temperature = ctk.CTkCheckBox(master= self, text= "Temperature", font= self.font_text)
+        graph_pressure = ctk.CTkCheckBox(master= self, text= "Pressure", font= self.font_text)
+        graph_humidity = ctk.CTkCheckBox(master= self, text= "Humidity", font= self.font_text)
+        graph_altitude = ctk.CTkCheckBox(master= self, text= "Altitude", font= self.font_text)
+        graph_acceleration = ctk.CTkCheckBox(master= self, text= "Acceleration", font= self.font_text)
+        self.graphs = [graph_speed, graph_temperature, graph_pressure, graph_humidity, graph_altitude, graph_acceleration]
+
+        space3 = add_space(self, 20)
+        space3.pack()
+        label_graphs.pack(pady= 5)
+        for graph in self.graphs:
+            graph.pack(pady= 5)
+
 
     def add_pbar(self, title, font, var, varname):
         text = ctk.CTkLabel(master= self, text= title, font= font)
@@ -41,6 +99,7 @@ class Screen(ctk.CTk):
         pbar = ctk.CTkProgressBar(master= root, corner_radius= 10, variable= varobj)
         self.barcount += 1
         return (text, pbar)
+
 
     def add_graph(self, title, font, var, varname):
         text = ctk.CTkLabel(master= self, text= title, font= font)
@@ -70,26 +129,30 @@ def time_since_start():
     return f"{time.strftime("%M:%S", time.gmtime(int(t)))}:{str(t%1)[2:]}"
 
 
+def sep_by(num: int, len: int):
+    n = num
+    sep = []
+    while n > len:
+        n -= len
+        sep.append(len)
+    sep.append(n)
+    return sep
 
+
+def add_space(master, height: int):
+    return ctk.CTkLabel(master= master, height= height, text= "")
 
 #create_file()
-
-root = Screen(960, 640, "Prueba")
-root.create_grid(4, 4)
-font = ctk.CTkFont(family= "Noto Sans", weight= "normal", size= 32)
-
-speedtext = ctk.CTkLabel(master= root, width= root.column-40, height= 40, text= "Speed", font= font)
-speedtext.grid(row= 0, column= 0, padx= 10, pady= 10)
-speedbar = ctk.CTkProgressBar(master= root, width= root.column-40, height= 20, corner_radius= 10)
-speedbar.grid(row= 0, column= 0, padx= 10, pady= 10)
-
+root = Screen(960, 640, "Zenitsat control HUD")
+#settings = Screen(240, 960, "Settings")
+root.create_settings()
 root.mainloop()
 
 
 
 
 # TO DO:
-#   Nothing (for now)
+#   Finish grid system
 
 # GRAPHICS:
 #   matplotlib
