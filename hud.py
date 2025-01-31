@@ -1,3 +1,4 @@
+import numpy as np
 import customtkinter as ctk
 import matplotlib.pyplot as plt
 import mplcyberpunk as mcp
@@ -139,12 +140,25 @@ def sep_by(num: int, len: int):
 
 
 
+ctk.set_appearance_mode("dark")
+plt.style.use("dark_background")
 
-
+x = np.linspace(0,1,35)
+y = np.cos(2*np.pi*x)
 
 root = Screen(960, 640, "Zenitsat control HUD")
 root.grid()
-plt.plot([0, 2, 9, 4], "-r")
+graph, axis = plt.subplots(dpi= 80, facecolor= "#000000")
+graph.set_facecolor("#000000")
+line, = axis.plot(x, y, color= "aqua", marker= "o", linewidth= 2)
+axis.grid(alpha= .2)
+axis.set_xlabel("Eje x", color= "white", family= "Cambria", size= 15)
+axis.set_ylabel("Eje y", color= "white", family= "Cambria", size= 15)
+axis.tick_params(color= "white", labelcolor= "white", length= 6, width= 2)
+axis.spines["bottom"].set_color("white")
+axis.spines["left"].set_color("white")
+mcp.make_lines_glow(axis)
+mcp.add_gradient_fill(alpha_gradientglow= 0.6)
 plt.show()
 
 
