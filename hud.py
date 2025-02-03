@@ -1,5 +1,6 @@
 import numpy as np
 import customtkinter as ctk
+import awesometkinter as atk
 import matplotlib.pyplot as plt
 import mplcyberpunk as mcp
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg as TkAgg
@@ -24,13 +25,6 @@ class Screen(ctk.CTk):
         self.create_fonts()
 
 
-    def grid(self, rows = 2, columns = 3):
-        for row in range(rows):
-            self.rowconfigure(index= row*2, minsize= 100, weight= 1)
-            self.rowconfigure(index= (row*2)+1, minsize= 100, weight= 1)
-        for column in range(columns):
-            self.columnconfigure(index= column, minsize= 200, weight= 1)
-
     def plot_data(self):
         for (text, bar) in self.bars:
             text.grid(row= 0, column= self.bars.index((text, bar)))
@@ -42,23 +36,17 @@ class Screen(ctk.CTk):
             TkAgg(figure= graph, master= self).get_tk_widget().grid(row= 3, column= self.bars.index(text), expand= True, fill= "both")
 
 
-    def create_grid(self, bars: list, graphs: list):
-        bar_count = sep_by(len(bars), 3)
-        graph_count = sep_by(len(graphs), 3)
+    def create_grid(self, rows, columns):
+        for row in range(rows):
+            self.rowconfigure(index= row, weight= 1)
+        for column in range(columns):
+            self.columnconfigure(index= column, weight= 1)
 
-        self.bar_frame = ctk.CTkFrame(master= self, height= 100*len(bar_count))
-        self.bar_frame.rowconfigure(index= 0, minsize= 80, weight= 1)
-        for row in range(len(bar_count)):
-            self.bar_frame.rowconfigure(index= row+1, minsize= 100, weight= 1)
-        for column in range(bar_count[0]):
-            self.bar_frame.columnconfigure(index= column, minsize= 200, weight= 1)
+    def create_frames(self):
+        self.frame_stats = atk.Frame3d(parent= self).grid(row= 0, column= 0, sticky= "NWES", columnspan= 5)
+        self.frame_2 = atk.Frame3d(parent= self).grid(row= 0, column= 5, sticky= "NWES", columnspan= 3)
+        #self.
 
-        self.graph_frame = ctk.CTkFrame(master= self, height= 200*len(graph_count))
-        self.graph_frame.rowconfigure(index= 0, minsize= 80, weight= 1)
-        for row in range(len(graph_count)):
-            self.graph_frame.rowconfigure(index= row+1, minsize= 200, weight= 1)
-        for column in range(graph_count[0]):
-            self.graph_frame.columnconfigure(index= column, minsize= 200, weight= 1)
 
 
     def create_fonts(self):
@@ -147,19 +135,23 @@ x = np.linspace(0,1,35)
 y = np.cos(2*np.pi*x)
 
 root = Screen(960, 640, "Zenitsat control HUD")
-root.grid()
-graph, axis = plt.subplots(dpi= 80, facecolor= "#000000")
-graph.set_facecolor("#000000")
-line, = axis.plot(x, y, color= "aqua", marker= "o", linewidth= 2)
-axis.grid(alpha= .2)
-axis.set_xlabel("Eje x", color= "white", family= "Cambria", size= 15)
-axis.set_ylabel("Eje y", color= "white", family= "Cambria", size= 15)
-axis.tick_params(color= "white", labelcolor= "white", length= 6, width= 2)
-axis.spines["bottom"].set_color("white")
-axis.spines["left"].set_color("white")
-mcp.make_lines_glow(axis)
-mcp.add_gradient_fill(alpha_gradientglow= 0.6)
-plt.show()
+root.create_grid(8, 8)
+root.create_frames()
+
+
+
+#graph, axis = plt.subplots(dpi= 80, facecolor= "#000000")
+#graph.set_facecolor("#000000")
+#line, = axis.plot(x, y, color= "aqua", marker= "o", linewidth= 2)
+#axis.grid(alpha= .2)
+#axis.set_xlabel("Eje x", color= "white", family= "Cambria", size= 15)
+#axis.set_ylabel("Eje y", color= "white", family= "Cambria", size= 15)
+#axis.tick_params(color= "white", labelcolor= "white", length= 6, width= 2)
+#axis.spines["bottom"].set_color("white")
+#axis.spines["left"].set_color("white")
+#mcp.make_lines_glow(axis)
+#mcp.add_gradient_fill(alpha_gradientglow= 0.6)
+#plt.show()
 
 
 #add_data()
@@ -169,8 +161,9 @@ plt.show()
 #root.plot_data()
 
 
-running = True
-while running:
+root.mainloop()
+#running = True
+#while running:
     #add_data()
-    root.update_idletasks()
-    root.update()
+    #root.update_idletasks()
+    #root.update()
