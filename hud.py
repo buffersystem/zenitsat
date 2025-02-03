@@ -1,4 +1,3 @@
-import numpy as np
 import customtkinter as ctk
 import awesometkinter as atk
 import matplotlib.pyplot as plt
@@ -25,41 +24,33 @@ class Screen(ctk.CTk):
         self.create_fonts()
 
 
-    def plot_data(self):
-        for (text, bar) in self.bars:
-            text.grid(row= 0, column= self.bars.index((text, bar)))
-            bar.grid(row= 1, column= self.bars.index((text, bar)))
-
-        for (text, graph, axis) in self.graphs:
-            text.grid(row= 2, column= self.graphs.index((text, graph)))
-            axis.grid(row= 3, column= self.graphs.index((text, graph)), expand= True, fill= "both")
-            TkAgg(figure= graph, master= self).get_tk_widget().grid(row= 3, column= self.bars.index(text), expand= True, fill= "both")
-
-
-    def create_grid(self, rows, columns):
-        for row in range(rows):
-            self.rowconfigure(index= row, weight= 1)
-        for column in range(columns):
-            self.columnconfigure(index= column, weight= 1)
-
-    def create_frames(self):
-        self.frame_stats = atk.Frame3d(parent= self).grid(row= 0, column= 0, sticky= "NWES", columnspan= 5)
-        self.frame_2 = atk.Frame3d(parent= self).grid(row= 0, column= 5, sticky= "NWES", columnspan= 3)
-        #self.
-
-
-
     def create_fonts(self):
         self.font_title = ctk.CTkFont(family= "Noto Sans", weight= "bold", size= 24)
         self.font_subtitle = ctk.CTkFont(family= "Noto Sans", weight= "bold", size= 20)
         self.font_text = ctk.CTkFont(family= "Noto Sans", weight= "normal", size= 16)
         self.font_itallic = ctk.CTkFont(family= "Noto Sans", weight= "normal", size= 16, slant= "italic")
 
+    def create_grid(self):
+        # grid
+        for i in range(16):
+            self.rowconfigure(index= i, uniform= "True", weight= 1)
+        for i in range(16):
+            self.columnconfigure(index= i, uniform= "True", weight= 1)
+        
+        # frame objects
+        frame_stats = atk.Frame3d(parent= self).grid(row= 0, column= 0, sticky= "NWES", columnspan= 11, rowspan= 2)
+        frame_pos = atk.Frame3d(parent= self).grid(row= 0, column= 11, sticky= "NWES", columnspan= 5, rowspan= 2)
+        frame_bars = atk.Frame3d(parent= self).grid(row=2, column= 0, sticky= "NWES", columnspan= 16, rowspan= 5)
+        frame_graphs = atk.Frame3d(parent= self).grid(row= 7, column= 0, sticky= "NWES", columnspan= 16, rowspan= 9)
+
+        a = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= "#333333", progress_color= "cyan")
+        a.grid(row= 4, column= 0, sticky= "NWES", padx= 20, columnspan= 15)
+        b = ctk.CTkProgressBar(master= self, orientation= "vertical", bg_color= "#333333", progress_color= "cyan")
+        b.grid(row= 0, column= 4, sticky= "NWES", padx= 20, pady= 10, rowspan= 2)
+
 
     def create_settings(self):
         label_title = ctk.CTkLabel(master= self, text= "Widget settings", font= self.font_title)
-        space1 = add_space(self, 30)
-        space1.pack()
         label_title.pack(pady= 5)
 
         # bar options
@@ -72,8 +63,6 @@ class Screen(ctk.CTk):
         bar_acceleration = ctk.CTkCheckBox(master= self, text= "Acceleration", font= self.font_text)
         self.bars = [bar_temperature, bar_pressure, bar_humidity, bar_altitude, bar_speed, bar_acceleration]
 
-        space2 = add_space(self, 20)
-        space2.pack()
         label_bars.pack(pady= 5)
         for bar in self.bars:
             bar.pack(pady= 5)
@@ -92,8 +81,6 @@ class Screen(ctk.CTk):
         # wind speed and direction
         self.graphs = [graph_temptime, graph_tempalt, graph_prestime, graph_presalt, graph_humitime, graph_humialt, graph_altitude, graph_speed, graph_acceleration]
 
-        space3 = add_space(self, 20)
-        space3.pack()
         label_graphs.pack(pady= 5)
         for graph in self.graphs:
             graph.pack(pady= 5)
@@ -112,10 +99,6 @@ class Screen(ctk.CTk):
         self.graphs.append((text, graph, axis))
 
 
-
-def add_space(master, height: int):
-    return ctk.CTkLabel(master= master, height= height, text= "")
-
 def sep_by(num: int, len: int):
     n = num
     sep = []
@@ -131,12 +114,8 @@ def sep_by(num: int, len: int):
 ctk.set_appearance_mode("dark")
 plt.style.use("dark_background")
 
-x = np.linspace(0,1,35)
-y = np.cos(2*np.pi*x)
-
 root = Screen(960, 640, "Zenitsat control HUD")
-root.create_grid(8, 8)
-root.create_frames()
+root.create_grid()
 
 
 
