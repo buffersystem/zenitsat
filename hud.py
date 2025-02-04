@@ -33,9 +33,9 @@ class Screen(ctk.CTk):
     def create_grid(self):
         # grid
         for i in range(16):
-            self.rowconfigure(index= i, uniform= "True", weight= 1)
+            self.rowconfigure(index= i, uniform= "True", minsize= self.height/16, weight= 1)
         for i in range(16):
-            self.columnconfigure(index= i, uniform= "True", weight= 1)
+            self.columnconfigure(index= i, uniform= "True", minsize= self.width/16, weight= 1)
         
         # frame objects
         frame_stats = atk.Frame3d(parent= self).grid(row= 0, column= 0, sticky= "NWES", columnspan= 11, rowspan= 2)
@@ -44,11 +44,16 @@ class Screen(ctk.CTk):
         frame_graphs = atk.Frame3d(parent= self).grid(row= 7, column= 0, sticky= "NWES", columnspan= 16, rowspan= 9)
 
         a = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= "#333333", progress_color= "cyan")
-        a.grid(row= 4, column= 0, sticky= "NWES", padx= 20, columnspan= 15)
+        a.grid(row= 4, column= 0, sticky= "NWES", padx= 20, pady= 10, columnspan= 4)
         b = ctk.CTkProgressBar(master= self, orientation= "vertical", bg_color= "#333333", progress_color= "cyan")
         b.grid(row= 0, column= 4, sticky= "NWES", padx= 20, pady= 10, rowspan= 2)
-
-
+        c = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= "#333333", progress_color= "cyan")
+        c.grid(row= 4, column= 4, sticky= "NWES", padx= 20, pady= 10, columnspan= 4)
+        d = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= "#333333", progress_color= "cyan")
+        d.grid(row= 4, column= 8, sticky= "NWES", padx= 20, pady= 10, columnspan= 4)
+        e = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= "#333333", progress_color= "cyan")
+        e.grid(row= 4, column= 12, sticky= "NWES", padx= 20, pady= 10, columnspan= 4)
+    
     def create_settings(self):
         label_title = ctk.CTkLabel(master= self, text= "Widget settings", font= self.font_title)
         label_title.pack(pady= 5)
@@ -110,6 +115,8 @@ def sep_by(num: int, len: int):
 
 
 
+x = list(range(10))
+y = list(range(10))
 
 ctk.set_appearance_mode("dark")
 plt.style.use("dark_background")
@@ -119,18 +126,22 @@ root.create_grid()
 
 
 
-#graph, axis = plt.subplots(dpi= 80, facecolor= "#000000")
-#graph.set_facecolor("#000000")
-#line, = axis.plot(x, y, color= "aqua", marker= "o", linewidth= 2)
-#axis.grid(alpha= .2)
-#axis.set_xlabel("Eje x", color= "white", family= "Cambria", size= 15)
-#axis.set_ylabel("Eje y", color= "white", family= "Cambria", size= 15)
-#axis.tick_params(color= "white", labelcolor= "white", length= 6, width= 2)
-#axis.spines["bottom"].set_color("white")
-#axis.spines["left"].set_color("white")
-#mcp.make_lines_glow(axis)
-#mcp.add_gradient_fill(alpha_gradientglow= 0.6)
-#plt.show()
+graph, axis = plt.subplots(facecolor= "#333333")
+graph.set_facecolor("#333333")
+line, = axis.plot(x, y, color= "magenta", marker= "o", linewidth= 2)
+axis.grid(alpha= .2)
+axis.set_xlabel("Eje x", color= "white", family= "Cambria", size= 15)
+axis.set_ylabel("Eje y", color= "white", family= "Cambria", size= 15)
+axis.tick_params(color= "white", labelcolor= "white", width= 1)
+axis.spines["bottom"].set_color("white")
+axis.spines["left"].set_color("white")
+axis.spines["top"].set_visible(False)
+axis.spines["right"].set_visible(False)
+axis.set_facecolor("#333333")
+mcp.make_lines_glow(axis)
+mcp.add_gradient_fill(alpha_gradientglow= 0.4)
+TkAgg(graph).get_tk_widget()
+plt.show()
 
 
 #add_data()
@@ -140,7 +151,7 @@ root.create_grid()
 #root.plot_data()
 
 
-root.mainloop()
+#root.mainloop()
 #running = True
 #while running:
     #add_data()
