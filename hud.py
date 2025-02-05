@@ -1,34 +1,30 @@
+import numpy as np
+import pandas as pd
 import customtkinter as ctk
 import awesometkinter as atk
 import matplotlib.pyplot as plt
 import mplcyberpunk as mcp
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg as TkAgg
 
-from data import *
+from comms import *
 
 
 class Screen(ctk.CTk):
-    def __init__(self, width: int, height: int, name: str):
+    def __init__(self, width: int, height: int, name: str, font: str = "system"):
         super().__init__()
         self.width = width
         self.height = height
         self.name = name
+        self.font = font
+
         self.bars: list[tuple[ctk.CTkLabel, ctk.CTkProgressBar]] = []
-        self.graphs: list[tuple[ctk.CTkLabel]] = []
+        self.graphs: list[tuple[ctk.CTkLabel, TkAgg]] = []
         self.rows = 0
         self.columns = 0
 
         self.geometry(f"{width}x{height}")
         self.title(name)
 
-        self.create_fonts()
-
-
-    def create_fonts(self):
-        self.font_title = ctk.CTkFont(family= "Noto Sans", weight= "bold", size= 24)
-        self.font_subtitle = ctk.CTkFont(family= "Noto Sans", weight= "bold", size= 20)
-        self.font_text = ctk.CTkFont(family= "Noto Sans", weight= "normal", size= 16)
-        self.font_itallic = ctk.CTkFont(family= "Noto Sans", weight= "normal", size= 16, slant= "italic")
 
     def create_grid(self):
         # grid
@@ -53,7 +49,8 @@ class Screen(ctk.CTk):
         d.grid(row= 4, column= 8, sticky= "NWES", padx= 20, pady= 10, columnspan= 4)
         e = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= "#333333", progress_color= "cyan")
         e.grid(row= 4, column= 12, sticky= "NWES", padx= 20, pady= 10, columnspan= 4)
-    
+
+
     def create_settings(self):
         label_title = ctk.CTkLabel(master= self, text= "Widget settings", font= self.font_title)
         label_title.pack(pady= 5)
@@ -98,51 +95,66 @@ class Screen(ctk.CTk):
         self.bars.append((text, pbar))
 
 
-    def add_graph(self, title, font, var):
-        text = ctk.CTkLabel(master= self, text= title, font= font)
-        graph, axis = plt.plot(var, "-r")
-        self.graphs.append((text, graph, axis))
+    def add_graph(self, title: str, color: str, var: list[int], marker: str = "", xlabel: str = "", ylabel: str = ""):
+        text = ctk.CTkLabel(master= self, fg_color= "#333333", text= title, font= (self.font, 18))
+        figure, ax = plt.subplots(facecolor= "#333333")
+        figure.set_facecolor("#333333")
+        ax.set_facecolor("#333333")
 
 
-def sep_by(num: int, len: int):
-    n = num
-    sep = []
-    while n > len:
-        n -= len
-        sep.append(len)
-    sep.append(n)
-    return sep
+        x = [i/10 for i in range(len(var))]
+        filled = pd.Series(var).ffill()
+        ax.plot(x, filled, color= color, marker= marker, linewidth= 2)
+        ax.grid(alpha= .2)
+
+        ax.set_xlabel(xlabel= xlabel, color= "white", family= self.font, size= 12)
+        ax.set_ylabel(ylabel= ylabel, color= "white", family= self.font, size= 12)
+        ax.tick_params(color= "white", labelcolor= "white", width= 1)
+
+        ax.spines["bottom"].set_color("white")
+        ax.spines["left"].set_color("white")
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        
+        mcp.make_lines_glow(ax)
+        mcp.add_gradient_fill(ax, alpha_gradientglow= 0.4)
+        widget = TkAgg(figure).get_tk_widget()
+
+        return text, widget
 
 
 
-x = list(range(10))
-y = list(range(10))
 
 ctk.set_appearance_mode("dark")
 plt.style.use("dark_background")
 
 root = Screen(960, 640, "Zenitsat control HUD")
 root.create_grid()
+text, widget = root.add_graph(title= "testing", color= "magenta", var= [0, 2, 1, 6, np.nan, 3, 4, np.nan, np.nan, 5, 8, 3, 6, 9, 2, np.nan, np.nan, 5, np.nan, 3, 1, 9])
+text.grid(row= 6, column= 0, columnspan= 3, sticky= "NWES")
+widget.grid(row= 7, column= 0, rowspan= 3, columnspan= 3, sticky= "NWES")
 
 
 
-graph, axis = plt.subplots(facecolor= "#333333")
-graph.set_facecolor("#333333")
-line, = axis.plot(x, y, color= "magenta", marker= "o", linewidth= 2)
-axis.grid(alpha= .2)
-axis.set_xlabel("Eje x", color= "white", family= "Cambria", size= 15)
-axis.set_ylabel("Eje y", color= "white", family= "Cambria", size= 15)
-axis.tick_params(color= "white", labelcolor= "white", width= 1)
-axis.spines["bottom"].set_color("white")
-axis.spines["left"].set_color("white")
-axis.spines["top"].set_visible(False)
-axis.spines["right"].set_visible(False)
-axis.set_facecolor("#333333")
-mcp.make_lines_glow(axis)
-mcp.add_gradient_fill(alpha_gradientglow= 0.4)
-TkAgg(graph).get_tk_widget()
-plt.show()
 
+#graph, ax = plt.subplots(facecolor= "#333333")
+#graph.set_facecolor("#333333")
+#line, = ax.plot(x, y, color= "magenta", marker= "o", linewidth= 2)
+#ax.grid(alpha= .2)
+#ax.set_xlabel("Eje x", color= "white", family= "Cambria", size= 15)
+#ax.set_ylabel("Eje y", color= "white", family= "Cambria", size= 15)
+#ax.tick_params(color= "white", labelcolor= "white", width= 1)
+#ax.spines["bottom"].set_color("white")
+#ax.spines["left"].set_color("white")
+#ax.spines["top"].set_visible(False)
+#ax.spines["right"].set_visible(False)
+#ax.set_facecolor("#333333")
+#mcp.make_lines_glow(ax)
+#mcp.add_gradient_fill(ax, alpha_gradientglow= 0.4)
+#TkAgg(graph).get_tk_widget()
+#plt.show()
+
+text = ctk.CTkLabel(master= root, text= "testing", font= ("fixedsys", 24), fg_color= "#333333").grid(row= 0, column= 0, rowspan= 2, columnspan= 2, sticky= "NWES")
 
 #add_data()
 #root.add_graph(title= "Altitude", font= root.font_subtitle, var= altitude)
@@ -151,7 +163,7 @@ plt.show()
 #root.plot_data()
 
 
-#root.mainloop()
+root.mainloop()
 #running = True
 #while running:
     #add_data()

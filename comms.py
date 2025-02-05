@@ -24,15 +24,20 @@ def read_data(filename):
         file.close()
 
 
-def time_since_start():
+def time_since_start(rounded= False):
     end = time.time()
     t = round(end-starttime, 3)
-    return f"{time.strftime("%M:%S", time.gmtime(int(t)))}:{str(t%1)[2:5]}"
+    if rounded:
+        return int(((t/10)+1)*10)
+    else:
+        return f"{time.strftime("%M:%S", time.gmtime(int(t)))}:{str(t%1)[2:5]}"
 
 
-create_file()
-time.sleep(.1)
-save_data("hello")
+
+
+#create_file()
+#time.sleep(.1)
+#save_data("hello")
 
 
 
