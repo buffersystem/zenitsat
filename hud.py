@@ -10,12 +10,13 @@ from comms import *
 
 
 class Screen(ctk.CTk):
-    def __init__(self, width: int, height: int, name: str, font: str = "system"):
+    def __init__(self, width: int, height: int, name: str, font: str = "terminal", bgcolor: str = "#333333 "):
         super().__init__()
         self.width = width
         self.height = height
         self.name = name
         self.font = font
+        self.bgcolor = bgcolor
 
         self.bars: list[tuple[ctk.CTkLabel, ctk.CTkProgressBar]] = []
         self.graphs: list[tuple[ctk.CTkLabel, TkAgg]] = []
@@ -34,20 +35,20 @@ class Screen(ctk.CTk):
             self.columnconfigure(index= i, uniform= "True", minsize= self.width/16, weight= 1)
         
         # frame objects
-        frame_stats = atk.Frame3d(parent= self).grid(row= 0, column= 0, sticky= "NWES", columnspan= 11, rowspan= 2)
-        frame_pos = atk.Frame3d(parent= self).grid(row= 0, column= 11, sticky= "NWES", columnspan= 5, rowspan= 2)
-        frame_bars = atk.Frame3d(parent= self).grid(row=2, column= 0, sticky= "NWES", columnspan= 16, rowspan= 5)
-        frame_graphs = atk.Frame3d(parent= self).grid(row= 7, column= 0, sticky= "NWES", columnspan= 16, rowspan= 9)
+        frame_stats = atk.Frame3d(parent= self, bg= self.bgcolor).grid(row= 0, column= 0, sticky= "NWES", columnspan= 11, rowspan= 2)
+        frame_pos = atk.Frame3d(parent= self, bg= self.bgcolor).grid(row= 0, column= 11, sticky= "NWES", columnspan= 5, rowspan= 2)
+        frame_bars = atk.Frame3d(parent= self, bg= self.bgcolor).grid(row=2, column= 0, sticky= "NWES", columnspan= 16, rowspan= 5)
+        frame_graphs = atk.Frame3d(parent= self, bg= self.bgcolor).grid(row= 7, column= 0, sticky= "NWES", columnspan= 16, rowspan= 9)
 
-        a = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= "#333333", progress_color= "cyan")
+        a = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= self.bgcolor, progress_color= "magenta")
         a.grid(row= 4, column= 0, sticky= "NWES", padx= 20, pady= 10, columnspan= 4)
-        b = ctk.CTkProgressBar(master= self, orientation= "vertical", bg_color= "#333333", progress_color= "cyan")
+        b = ctk.CTkProgressBar(master= self, orientation= "vertical", bg_color= self.bgcolor, progress_color= "magenta")
         b.grid(row= 0, column= 4, sticky= "NWES", padx= 20, pady= 10, rowspan= 2)
-        c = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= "#333333", progress_color= "cyan")
+        c = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= self.bgcolor, progress_color= "magenta")
         c.grid(row= 4, column= 4, sticky= "NWES", padx= 20, pady= 10, columnspan= 4)
-        d = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= "#333333", progress_color= "cyan")
+        d = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= self.bgcolor, progress_color= "magenta")
         d.grid(row= 4, column= 8, sticky= "NWES", padx= 20, pady= 10, columnspan= 4)
-        e = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= "#333333", progress_color= "cyan")
+        e = ctk.CTkProgressBar(master= self, height= 5, width= 100, bg_color= self.bgcolor, progress_color= "magenta")
         e.grid(row= 4, column= 12, sticky= "NWES", padx= 20, pady= 10, columnspan= 4)
 
 
@@ -96,10 +97,10 @@ class Screen(ctk.CTk):
 
 
     def add_graph(self, title: str, color: str, var: list[int], marker: str = "", xlabel: str = "", ylabel: str = ""):
-        text = ctk.CTkLabel(master= self, fg_color= "#333333", text= title, font= (self.font, 18))
-        figure, ax = plt.subplots(facecolor= "#333333")
-        figure.set_facecolor("#333333")
-        ax.set_facecolor("#333333")
+        text = ctk.CTkLabel(master= self, fg_color= self.bgcolor, text= title, font= (self.font, 18))
+        figure, ax = plt.subplots(facecolor= self.bgcolor)
+        figure.set_facecolor(self.bgcolor)
+        ax.set_facecolor(self.bgcolor)
 
 
         x = [i/10 for i in range(len(var))]
@@ -117,7 +118,7 @@ class Screen(ctk.CTk):
         ax.spines["right"].set_visible(False)
         
         mcp.make_lines_glow(ax)
-        mcp.add_gradient_fill(ax, alpha_gradientglow= 0.4)
+        mcp.add_gradient_fill(ax, alpha_gradientglow= 0.5)
         widget = TkAgg(figure).get_tk_widget()
 
         return text, widget
@@ -128,33 +129,15 @@ class Screen(ctk.CTk):
 ctk.set_appearance_mode("dark")
 plt.style.use("dark_background")
 
+
 root = Screen(960, 640, "Zenitsat control HUD")
 root.create_grid()
-text, widget = root.add_graph(title= "testing", color= "magenta", var= [0, 2, 1, 6, np.nan, 3, 4, np.nan, np.nan, 5, 8, 3, 6, 9, 2, np.nan, np.nan, 5, np.nan, 3, 1, 9])
-text.grid(row= 6, column= 0, columnspan= 3, sticky= "NWES")
-widget.grid(row= 7, column= 0, rowspan= 3, columnspan= 3, sticky= "NWES")
+text, widget = root.add_graph(title= "testing", color= "magenta", var= random.sample(range(30), 25))
+text.grid(row= 6, column= 0, columnspan= 3, sticky= "NWES", padx= 10, pady= 10)
+widget.grid(row= 7, column= 0, rowspan= 3, columnspan= 3, sticky= "NWES", padx= 10, pady= 10)
 
+text = ctk.CTkLabel(master= root, text= "testing", font= ("courier new", 24), fg_color= "#333333").grid(row= 0, column= 0, rowspan= 2, columnspan= 2, sticky= "NWES", padx= 10, pady= 10)
 
-
-
-#graph, ax = plt.subplots(facecolor= "#333333")
-#graph.set_facecolor("#333333")
-#line, = ax.plot(x, y, color= "magenta", marker= "o", linewidth= 2)
-#ax.grid(alpha= .2)
-#ax.set_xlabel("Eje x", color= "white", family= "Cambria", size= 15)
-#ax.set_ylabel("Eje y", color= "white", family= "Cambria", size= 15)
-#ax.tick_params(color= "white", labelcolor= "white", width= 1)
-#ax.spines["bottom"].set_color("white")
-#ax.spines["left"].set_color("white")
-#ax.spines["top"].set_visible(False)
-#ax.spines["right"].set_visible(False)
-#ax.set_facecolor("#333333")
-#mcp.make_lines_glow(ax)
-#mcp.add_gradient_fill(ax, alpha_gradientglow= 0.4)
-#TkAgg(graph).get_tk_widget()
-#plt.show()
-
-text = ctk.CTkLabel(master= root, text= "testing", font= ("fixedsys", 24), fg_color= "#333333").grid(row= 0, column= 0, rowspan= 2, columnspan= 2, sticky= "NWES")
 
 #add_data()
 #root.add_graph(title= "Altitude", font= root.font_subtitle, var= altitude)
@@ -164,6 +147,7 @@ text = ctk.CTkLabel(master= root, text= "testing", font= ("fixedsys", 24), fg_co
 
 
 root.mainloop()
+root.quit()
 #running = True
 #while running:
     #add_data()
